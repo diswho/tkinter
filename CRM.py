@@ -9,11 +9,14 @@ conn = psycopg2.connect(
 )
 
 cursor = conn.cursor()
-conn.autocommit = True
 
-cursor.execute("CREATE DATABASE tkinter") 
-conn.commit()
-conn.close()
+
+# cursor.execute("CREATE DATABASE tkinter") 
+
+cursor.execute("SELECT datname FROM pg_database")
+cursor.fetchall()
+for db in cursor:
+    print(db)
 
 # Create the main window
 # root = Tk()
@@ -23,12 +26,14 @@ conn.close()
 
 
 # def create_database(cursor):
+#     conn.autocommit = True
 #     cursor.execute("CREATE DATABASE tkinter")    
-#     print(cursor.execute("SHOW DATABASE"))
 
 
 # create_database(cursor)
 
+conn.commit()
+conn.close()
 
 # Start the event loop
 # root.mainloop()
