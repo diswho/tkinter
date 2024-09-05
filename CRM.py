@@ -1,3 +1,4 @@
+import csv
 import psycopg2
 from tkinter import *
 
@@ -17,6 +18,14 @@ conn = psycopg2.connect(
 cursor = conn.cursor()
 
 
+def create_database():
+    conn.autocommit = True
+    cursor.execute("CREATE DATABASE tkinter")
+
+
+# create_database()
+
+
 def create_table():
     cursor.execute("""CREATE TABLE IF NOT EXISTS customers (
                    first_name VARCHAR(255),
@@ -25,6 +34,9 @@ def create_table():
                    price_paid DECIMAL(10,2),
                    user_id SERIAL PRIMARY KEY
                    )""")
+    conn.commit()
+
+
 # create_table()
 
 
@@ -131,6 +143,13 @@ def insert_data():
         print("Error inserting data:", e)
 
 
+def export_csv(result):
+    with open('customers.csv', 'a', newline='') as f:
+        w = csv.writer(f, dialect='excel')
+        for record in result:
+            w.writerow(record)
+
+
 def list_customers():
     list_customer_query = Tk()
     list_customer_query.title("List of customers")
@@ -144,7 +163,8 @@ def list_customers():
             num += 1
     exit_btn = Button(list_customer_query, text="Quit", command=list_customer_query.destroy)
     exit_btn.grid(row=len(result), column=0, columnspan=2)
-    return
+    csv_btn = Button(list_customer_query, text="Save to Excel", command=lambda: export_csv(result))
+    csv_btn.grid(row=len(result), column=2, columnspan=2)
 
 
 # Create the input fields
@@ -154,7 +174,7 @@ create_input_fields()
 # list_button.grid(row=len(entry_fields), column=0, columnspan=2)
 
 # alter_button = Button(root, text="Alter Table", command=alter_table)
-# alter_button.pack()
+# alter_button.grid(row=len(entry_fields)+1, column=0, columnspan=2)
 
 # table_label = Label(root, text="Table Name:")
 # table_label.grid(row=len(entry_fields)+1, column=0, columnspan=2, sticky=W)
@@ -170,8 +190,8 @@ create_input_fields()
 insert_button = Button(root, text="Insert Data", command=insert_data)
 insert_button.grid(row=len(entry_fields)+1, column=0)
 
-insert_button = Button(root, text="View Data", command=list_customers)
-insert_button.grid(row=len(entry_fields)+1, column=1)
+view_button = Button(root, text="View Data", command=list_customers)
+view_button.grid(row=len(entry_fields)+1, column=1)
 
 # Start the event loop
 root.mainloop()
