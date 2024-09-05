@@ -153,6 +153,8 @@ def export_csv(result):
 def list_customers():
     list_customer_query = Tk()
     list_customer_query.title("List of customers")
+    list_customer_query.iconbitmap("resources/icons/home.ico")
+
     cursor.execute("SELECT * FROM customers")
     result = cursor.fetchall()
     for index, x in enumerate(result):
@@ -165,6 +167,32 @@ def list_customers():
     exit_btn.grid(row=len(result), column=0, columnspan=2)
     csv_btn = Button(list_customer_query, text="Save to Excel", command=lambda: export_csv(result))
     csv_btn.grid(row=len(result), column=2, columnspan=2)
+
+
+def search_customer():
+    search_customer = Tk()
+    search_customer.title("List of customers")
+    search_customer.iconbitmap("resources/icons/home.ico")
+
+    def search_now():
+        searched = search_box.get()
+        sql = f"""select * from customers where last_name ='{searched}'"""
+        name = (searched)
+        cursor.execute(sql)
+        result = cursor.fetchall()
+
+        if not result:
+            result = "Record not Found..."
+
+        searched_label = Label(search_customer, text=result)
+        searched_label.grid(row=2, column=0, padx=10, pady=10)
+
+    search_label = Label(search_customer, text="Search Customer by Last name")
+    search_label.grid(row=0, column=0, padx=10, pady=10)
+    search_box = Entry(search_customer)
+    search_box.grid(row=0, column=1, padx=10, pady=10)
+    search_btn = Button(search_customer, text="Search", command=search_now)
+    search_btn.grid(row=1, column=0, padx=10, pady=10)
 
 
 # Create the input fields
@@ -192,6 +220,9 @@ insert_button.grid(row=len(entry_fields)+1, column=0)
 
 view_button = Button(root, text="View Data", command=list_customers)
 view_button.grid(row=len(entry_fields)+1, column=1)
+
+search_btn = Button(root, text="Search Customer", command=search_customer)
+search_btn.grid(row=len(entry_fields)+1, column=2)
 
 # Start the event loop
 root.mainloop()
