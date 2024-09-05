@@ -1,3 +1,10 @@
 {
-  "cSpell.words": ["columnspan", "offvalue", "onvalue", "padx", "pady"]
+  "cSpell.words": [
+    "columnspan",
+    "offvalue",
+    "onvalue",
+    "padx",
+    "pady",
+    "psycopg"
+  ]
 }
