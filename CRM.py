@@ -1,4 +1,5 @@
 import csv
+from tkinter import ttk
 import psycopg2
 from tkinter import *
 
@@ -153,7 +154,7 @@ def export_csv(result):
 def list_customers():
     list_customer_query = Tk()
     list_customer_query.title("List of customers")
-    list_customer_query.iconbitmap("resources/icons/home.ico")
+    # list_customer_query.iconbitmap("resources/icons/home.ico")
 
     cursor.execute("SELECT * FROM customers")
     result = cursor.fetchall()
@@ -172,12 +173,18 @@ def list_customers():
 def search_customer():
     search_customer = Tk()
     search_customer.title("List of customers")
-    search_customer.iconbitmap("resources/icons/home.ico")
+    # search_customer.iconbitmap("resources/icons/home.ico")
 
     def search_now():
         searched = search_box.get()
-        sql = f"""select * from customers where last_name ='{searched}'"""
-        name = (searched)
+        if drop.get()=="First name":
+            select="first_name"
+        elif drop.get()=="Last name":
+            select="last_name"
+        elif drop.get()=="Customer ID":
+            select="user_id"
+
+        sql = f"""select * from customers where {select} ='{searched}'"""
         cursor.execute(sql)
         result = cursor.fetchall()
 
@@ -185,14 +192,23 @@ def search_customer():
             result = "Record not Found..."
 
         searched_label = Label(search_customer, text=result)
-        searched_label.grid(row=2, column=0, padx=10, pady=10)
+        searched_label.grid(row=2, column=0, padx=10, pady=10,columnspan=5)
 
     search_label = Label(search_customer, text="Search Customer by Last name")
     search_label.grid(row=0, column=0, padx=10, pady=10)
     search_box = Entry(search_customer)
     search_box.grid(row=0, column=1, padx=10, pady=10)
+    drop = ttk.Combobox(search_customer, values=["Search by ...", "First name", "Last name", "Customer ID"])
+    drop.current(0)
+    drop.grid(row=0, column=2)
+
+
     search_btn = Button(search_customer, text="Search", command=search_now)
     search_btn.grid(row=1, column=0, padx=10, pady=10)
+    exit_btn = Button(search_customer, text="Quit", command=search_customer.destroy)
+    exit_btn.grid(row=1, column=1, columnspan=2)
+
+    
 
 
 # Create the input fields
